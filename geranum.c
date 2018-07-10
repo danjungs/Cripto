@@ -14,10 +14,10 @@ int main(){
 	long P1,P2;
 	long CP1,CP2,DP;
 	getPrime(&P1,&P2);
-	printf("P1: %ld\nP2: %ld\n",P1,P2);
+	long Y = (P1-1)*(P2-1);
 	if(checkPrime(P1) && checkPrime(P2)){
 		getCP(P1,P2,&CP1,&CP2);
-		// getDP(P1,P2,&DP);
+		getDP(CP1,Y,&DP);
 		printf("Numeros são Primos!\n");
 	}
 	else
@@ -58,8 +58,21 @@ void getCP(long P1,long P2,long *CP1,long *CP2){
 		if (Y % primos[i] != 0)
 			break;
 	}
-	printf ("Y: %d\n",Y);
 	if (primos[i] != '\0')
 		*CP1 = primos[i];
 }		
+
+void getDP(long CP1,long Y,long *DP){
+	long c = 1;
+	
+	while(c++ < Y){
+		if ((CP1*c)%Y == 1)
+			break;
+	}
+	*DP = c;
+}
+
+
+
+
 		
