@@ -7,8 +7,8 @@
 
 void getPrime(long*,long*);
 int checkPrime(long);
-void getCP(long,long,long,long);
-void getDP(long,long,long);
+void getCP(long,long,long*,long*);
+void getDP(long,long,long*);
 
 int main(){
 	long P1,P2;
@@ -16,8 +16,8 @@ int main(){
 	getPrime(&P1,&P2);
 	printf("P1: %ld\nP2: %ld\n",P1,P2);
 	if(checkPrime(P1) && checkPrime(P2)){
-		// getCP(P1,P2,CP1,CP2);
-		// getDP(P1,P2,DP);
+		getCP(P1,P2,&CP1,&CP2);
+		// getDP(P1,P2,&DP);
 		printf("Numeros são Primos!\n");
 	}
 	else
@@ -47,3 +47,19 @@ int checkPrime(long a){
    }
    return OK;
 }
+
+void getCP(long P1,long P2,long *CP1,long *CP2){
+	long primos[]= {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79};
+	long Y = (P1-1)*(P2-1);
+	int i= 0;
+	
+	*CP2 = P1*P2;
+	while(primos[i++]){
+		if (Y % primos[i] != 0)
+			break;
+	}
+	printf ("Y: %d\n",Y);
+	if (primos[i] != '\0')
+		*CP1 = primos[i];
+}		
+		
