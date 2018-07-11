@@ -1,3 +1,4 @@
+/* ---------------- Bibliotecas e Definições -------------------------- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -9,13 +10,16 @@
 #define DESCRIP 6
 #define MAX_FOLDER 20
 #define MAX 50
+/* -------------------------------------------------------------------- */
 
+/* -------------- Protótipos de Funções usadas no main ---------------- */
 long getPrime(int);
 int checkPrime(long);
 long getCP(long,long,int);
 long getDP(long,long);
 void generateNumCrip(long,long);
 void generateNumDescrip(long,long);
+/* -------------------------------------------------------------------- */
 
 int main(){
 	long P1,P2;
@@ -37,6 +41,7 @@ int main(){
 	return 0;
 }
 
+// função retorna um primo pego pelo stdin
 long getPrime(int num){
 	char buffer[MAX];
 	if (num == FIRST)
@@ -47,6 +52,7 @@ long getPrime(int num){
 	return atoi (buffer);
 }
 
+// função testa se o numero é primo
 int checkPrime(long a){
    long c;
  
@@ -57,6 +63,10 @@ int checkPrime(long a){
    return OK;
 }
 
+/* função calcula CP, caso seja o primero, ela fatora Y e testa com
+	o banco de primos criado em primos.
+	caso seja o segundo, ela retorna o produto dos dois primos.
+*/
 long getCP(long P1,long P2,int num){
 	long primos[]= {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79};
 	long Y = (P1-1)*(P2-1);
@@ -73,6 +83,9 @@ long getCP(long P1,long P2,int num){
 	return P1*P2;
 }		
 
+/*Função retorna o valor do numero que multiplicado por CP1 
+  tem resto 1 na divisão por Y
+*/
 long getDP(long CP1,long Y){
 	long c = 1;
 	
@@ -83,7 +96,9 @@ long getDP(long CP1,long Y){
 	return c;
 }
 
+/* --------- Protótipos de Funções usadas nas funções a seguir -------- */
 void writeFile(long,long,int);
+/* -------------------------------------------------------------------- */
 
 void generateNumCrip(long CP1,long CP2){
    writeFile(CP1,CP2,CRIPTO);
@@ -92,6 +107,9 @@ void generateNumDescrip(long DP,long CP2){
    writeFile(DP,CP2,DESCRIP);
 }
 
+/* função escreve em ASCII os dois LONGs que recebe
+	o sentido decide se será gerado o numcripto ou o numdescripto
+*/
 void writeFile(long a,long b,int sentido){
    char folder[MAX_FOLDER];   
    if(sentido == CRIPTO)
