@@ -1,28 +1,32 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define OK 1
 #define ERRO 0
-#define MAX 50
+#define OK 1
+#define FIRST 2
+#define SECOND 3
 #define CRIPTO 5
 #define DESCRIP 6
 #define MAX_FOLDER 20
+#define MAX 50
 
-void getPrime(long*,long*);
+long getPrime(int);
 int checkPrime(long);
-void getCP(long,long,long*,long*);
-void getDP(long,long,long*);
+long getCP(long,long,int);
+long getDP(long,long);
 void generateNumCrip(long,long);
 void generateNumDescrip(long,long);
 
 int main(){
 	long P1,P2;
 	long CP1,CP2,DP;
-	getPrime(&P1,&P2);
+	P1 =getPrime(FIRST);
+	P2 =getPrime(SECOND);
 	long Y = (P1-1)*(P2-1);
 	if(checkPrime(P1) && checkPrime(P2)){
-		getCP(P1,P2,&CP1,&CP2);
-		getDP(CP1,Y,&DP);
+		CP1 = getCP(P1,P2,FIRST);
+		CP2 = getCP(P1,P2,SECOND);
+		DP = getDP(CP1,Y);
       generateNumCrip(CP1,CP2);
       generateNumDescrip(DP,CP2);
 	}
@@ -33,15 +37,14 @@ int main(){
 	return 0;
 }
 
-void getPrime(long *a,long *b){
+long getPrime(int num){
 	char buffer[MAX];
-	printf ("Entre o primeiro primo: ");
+	if (num == FIRST)
+		printf ("Entre o primeiro primo: ");
+	else
+		printf ("Entre o segundo primo:  ");
 	fgets (buffer, MAX, stdin);
-	*a = atoi (buffer);
-	
-	printf ("Entre o segundo primo:  ");
-	fgets (buffer, MAX, stdin);
-	*b = atoi (buffer);
+	return atoi (buffer);
 }
 
 int checkPrime(long a){
@@ -54,28 +57,30 @@ int checkPrime(long a){
    return OK;
 }
 
-void getCP(long P1,long P2,long *CP1,long *CP2){
+long getCP(long P1,long P2,int num){
 	long primos[]= {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79};
 	long Y = (P1-1)*(P2-1);
 	int i= 0;
 	
-	*CP2 = P1*P2;
-	while(primos[i++]){
-		if (Y % primos[i] != 0)
-			break;
+	if (num == FIRST){
+		while(primos[i++]){
+			if (Y % primos[i] != 0)
+				break;
+		}
+		if (primos[i] != '\0')
+			return primos[i];
 	}
-	if (primos[i] != '\0')
-		*CP1 = primos[i];
+	return P1*P2;
 }		
 
-void getDP(long CP1,long Y,long *DP){
+long getDP(long CP1,long Y){
 	long c = 1;
 	
 	while(c++ < Y){
 		if ((CP1*c)%Y == 1)
 			break;
 	}
-	*DP = c;
+	return c;
 }
 
 void writeFile(long,long,int);
@@ -96,8 +101,7 @@ void writeFile(long a,long b,int sentido){
      
    FILE *fp;
    fp = fopen(folder, "w");
-   fprintf(fp,"%ld ",a);
-   fprintf(fp,"%ld",b);
+   fprintf(fp,"%ld %ld",a,b);
    fclose(fp);          
 }
 
