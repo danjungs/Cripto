@@ -4,11 +4,16 @@
 #define OK 1
 #define ERRO 0
 #define MAX 50
+#define CRIPTO 5
+#define DESCRIP 6
+#define MAX_FOLDER 20
 
 void getPrime(long*,long*);
 int checkPrime(long);
 void getCP(long,long,long*,long*);
 void getDP(long,long,long*);
+void generateNumCrip(long,long);
+void generateNumDescrip(long,long);
 
 int main(){
 	long P1,P2;
@@ -18,7 +23,8 @@ int main(){
 	if(checkPrime(P1) && checkPrime(P2)){
 		getCP(P1,P2,&CP1,&CP2);
 		getDP(CP1,Y,&DP);
-		printf("Numeros são Primos!\n");
+      generateNumCrip(CP1,CP2);
+      generateNumDescrip(DP,CP2);
 	}
 	else
 		printf("Numeros não são Primos!\n");
@@ -71,6 +77,31 @@ void getDP(long CP1,long Y,long *DP){
 	}
 	*DP = c;
 }
+
+void writeFile(long,long,int);
+
+void generateNumCrip(long CP1,long CP2){
+   writeFile(CP1,CP2,CRIPTO);
+}
+void generateNumDescrip(long DP,long CP2){
+   writeFile(DP,CP2,DESCRIP);
+}
+
+void writeFile(long a,long b,int sentido){
+   char folder[MAX_FOLDER];   
+   if(sentido == CRIPTO)
+      strcpy(folder,"numcripto.txt");
+   else
+      strcpy(folder,"numdescripto.txt"); 
+     
+   FILE *fp;
+   fp = fopen(folder, "w");
+   fprintf(fp,"%ld ",a);
+   fprintf(fp,"%ld",b);
+   fclose(fp);          
+}
+
+
 
 
 
