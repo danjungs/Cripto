@@ -108,7 +108,7 @@ void generateNumDescrip(long DP,long CP2){
 }
 
 /* função escreve em ASCII os dois LONGs que recebe
-	o sentido decide se será gerado o numcripto ou o numdescripto
+   o sentido decide se será gerado o numcripto ou o numdescripto
 */
 void writeFile(long a,long b,int sentido){
    char folder[MAX_FOLDER];   
