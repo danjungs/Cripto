@@ -64,8 +64,8 @@ int checkPrime(long a){
 }
 
 /* função calcula CP, caso seja o primero, ela fatora Y e testa com
-	o banco de primos criado em primos.
-	caso seja o segundo, ela retorna o produto dos dois primos.
+   o banco de primos criado em primos.
+   caso seja o segundo, ela retorna o produto dos dois primos.
 */
 long getCP(long P1,long P2,int num){
 	long primos[]= {2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79};
@@ -108,7 +108,7 @@ void generateNumDescrip(long DP,long CP2){
 }
 
 /* função escreve em ASCII os dois LONGs que recebe
-	o sentido decide se será gerado o numcripto ou o numdescripto
+   o sentido decide se será gerado o numcripto ou o numdescripto
 */
 void writeFile(long a,long b,int sentido){
    char folder[MAX_FOLDER];   
