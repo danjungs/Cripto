@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#define MAXLIN 100
+#define MAXLIN 10000
 #define FIRST 1
 #define SECOND 2
 #define CRIPTO 3
@@ -73,37 +73,88 @@ long getnumber(char*b,int num){
 /* ------------------------------------------------------------*/
 /* -----Protótipos de Funções para cripto e descripto----------*/
 int lelinha (char[], int);
+int leCrip (long[], int);
+long eleva(long,int);
 void criptaLine(char *,long,long, long*);
-void writeFile(long*);
-
+void binarioInv(int,char *);
+void descriptaLine(long *,char*,long, char*);
+void writeCrip(long*);
+void writeText(char*);
 /* ------------------------------------------------------------*/
+
 /* ------Criptografa o texto inteiro linha por linha ----------*/
 int criptoText(long CP1,long CP2){
 	char buffer[MAXLIN];
    long  *lineCrip = malloc(MAXLIN*sizeof(int));
+
 	while (lelinha(buffer, MAXLIN)) {
+
       criptaLine(buffer,CP1,CP2,lineCrip);		
-		writeFile(lineCrip);
-		for(int i = 0; lineCrip[i] !='\0';i++)
-      	printf("Letra: %c cripto: %ld\n",buffer[i],lineCrip[i]);
+		writeCrip(lineCrip);
 	}
 	free(lineCrip);
 	return 1;
 }
 
+
+
+void criptaLine(char *linha,long CP1,long CP2, long*saida)
+ {
+ 	int i=0;
+ 	for(i=0; linha[i] != '\0';i++){
+ 		saida[i]= (long)linha[i];
+ 		saida[i]=  eleva(saida[i],CP1) % CP2;
+ 	}
+   saida[i] = '\0';
+ }
+
 int descriptoText(long DP1,long DP2){
-	char buffer[MAXLIN];
-   long  *lineDescrip = malloc(MAXLIN*sizeof(int));
-	while (lelinha(buffer, MAXLIN)) {
-		for(int i=0; buffer[i] != '\0';i++){
-			if(isalpha(buffer[i]))
-				buffer[i] = buffer[i] -1;
-		}
-      criptaLine(buffer,DP1,DP2,lineDescrip);  // SÓ PRA COMPILAR
-		writeFile(lineDescrip);
+	long buffer[MAXLIN];
+   char  *lineDescrip = malloc(MAXLIN*sizeof(int));
+   char bin[MAXBUF]="";
+   binarioInv(DP1,bin);
+	while (leCrip(buffer, MAXLIN)) {
+      descriptaLine(buffer,bin,DP2,lineDescrip);
+      printf("inicio: %s  - fim. ",lineDescrip);
+		writeText(lineDescrip);
 	}
 	free(lineDescrip);
 	return 1;
+}
+
+/* Gera um array com o binario invertido para o id ser igual ao expoente */
+void binarioInv(int n,char *bin) { 
+	int i=0;
+	while(n>0){
+		if(n%2 ==0)
+			strcat(bin,"0");
+		else
+			strcat(bin,"1");
+		n /=2;
+		i++;
+	}
+	bin[i] = '\0';
+}
+/* ----------------------------------------------------------------------*/
+
+void descriptaLine(long *linha,char *binario,long DP2, char *saida){
+	int j =0;
+	long resto = 0,valorfinal = 1;
+
+	for(j=0; linha[j] != '\0';j++){
+		resto = 0;valorfinal = 1;
+		for(int i=0;binario[i] != '\0';i++){
+			if (i==0)
+				resto = linha[j]%DP2;
+			if (binario[i] =='1'){
+				valorfinal *=resto;
+			}
+			resto = eleva(resto,2) % DP2;
+		}
+		valorfinal = valorfinal%DP2;
+		saida[j] = valorfinal;
+	}
+	saida[j] = '\0';
 }
 
 int lelinha (char s [], int lim){
@@ -117,6 +168,17 @@ int lelinha (char s [], int lim){
 	return i;
 	}
 	
+int leCrip (long s[], int lim){
+
+	int c, i;
+	for(i=0; i<lim-1 && (c=getchar())!=EOF && c!=108; ++i)
+		s[i] = c;
+	if (c == 108)
+	 	s[i++] = c;
+	s[i]= '\0';
+	return i;
+	}
+	
 long eleva(long a,int b){
 	long aux=a;
 	while(b-->1)
@@ -124,24 +186,20 @@ long eleva(long a,int b){
 	return a;
 }
 
-void criptaLine(char *linha,long CP1,long CP2, long*b)
- {
- 	int i=0;
- 	for(i=0; linha[i] != '\0';i++){
- 		b[i]= (long)linha[i];
- 		b[i]=  eleva(b[i],CP1) % CP2;
- 	}
-   b[i] = '\0';
- }
-
-void writeFile(long *t){      
+void writeCrip(long *t){      
    FILE *fp;
-   fp = fopen("saida.crp", "a");
+   fp = fopen("saida.txt", "a");
    for(int i = 0; t[i] !='\0';i++)
       fputc(t[i],fp);
    fclose(fp);          
 }	
 	
+void writeText(char *t){      
+   FILE *fp;
+   fp = fopen("decode.txt", "a");
+   fprintf(fp,"%s",t);
+   fclose(fp);          
+}
 	
 	
 	
