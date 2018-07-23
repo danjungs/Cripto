@@ -13,6 +13,7 @@
 
 int criptoText(long,long);
 int descriptoText(long,long);
+int descriptoText2(long,long);
 void getKeys(long*,long*,int);
 
 int main(int argc, char *argv[]){
@@ -29,7 +30,7 @@ int main(int argc, char *argv[]){
 				break;
 			case 'd':
             getKeys(&CH1,&CH2,DESCRIP);
-				status=descriptoText(CH1,CH2);
+				status=descriptoText2(CH1,CH2);
 				break;
 
 			default:
@@ -75,10 +76,11 @@ long getnumber(char*b,int num){
 int lelinha (char[], int);
 int leCrip (long[], int);
 long eleva(long,int);
-void criptaLine(char *,long,long, long*);
+int criptaLine(char *,long,long, long*);
 void binarioInv(int,char *);
-void descriptaLine(long *,char*,long, char*);
-void writeCrip(long*);
+void descriptaLine(long *,char*,long, char*,int);
+void writeCrip(long*,int);
+void writeCrip2(long*,int);
 void writeText(char*);
 /* ------------------------------------------------------------*/
 
@@ -86,37 +88,48 @@ void writeText(char*);
 int criptoText(long CP1,long CP2){
 	char buffer[MAXLIN];
    long  *lineCrip = malloc(MAXLIN*sizeof(int));
-
+   int tam;
 	while (lelinha(buffer, MAXLIN)) {
-
-      criptaLine(buffer,CP1,CP2,lineCrip);		
-		writeCrip(lineCrip);
+      tam = criptaLine(buffer,CP1,CP2,lineCrip);		
+		printf("tamanho da linha = %d\n",tam);
+      writeCrip2(lineCrip,tam);
 	}
 	free(lineCrip);
+    // printf("ACABOU O CRIPTO TEXT\n");
 	return 1;
 }
 
 
 
-void criptaLine(char *linha,long CP1,long CP2, long*saida)
+int criptaLine(char *linha,long CP1,long CP2, long*saida)
  {
  	int i=0;
  	for(i=0; linha[i] != '\0';i++){
  		saida[i]= (long)linha[i];
- 		saida[i]=  eleva(saida[i],CP1) % CP2;
+ 		if(isalpha(saida[i]) || saida[i] == ' ' || saida[i] == '\n')
+ 			saida[i]=  eleva(saida[i],CP1) % CP2;
+      printf("letra: %c  crip: %ld\n",linha[i],saida[i]);      	
  	}
-   saida[i] = '\0';
+   return i;   
  }
 
 int descriptoText(long DP1,long DP2){
 	long buffer[MAXLIN];
    char  *lineDescrip = malloc(MAXLIN*sizeof(int));
    char bin[MAXBUF]="";
+   int tam;
    binarioInv(DP1,bin);
-	while (leCrip(buffer, MAXLIN)) {
-      descriptaLine(buffer,bin,DP2,lineDescrip);
-      printf("inicio: %s  - fim. ",lineDescrip);
-		writeText(lineDescrip);
+	while ((tam =leCrip(buffer, MAXLIN))) {
+		//for(int i = 0; i<tam;i++)
+      //	if(buffer[i] == 271)
+		//		printf("\n\n OPA OLHA ELE AQUI\n\n");
+      //	printf("%ld ",buffer[i]);
+      printf("\nAcabou a Linha\n");
+      
+      descriptaLine(buffer,bin,DP2,lineDescrip,tam);
+      //printf("%s ",lineDescrip);
+     // printf("\n\n\n");
+		//writeText(lineDescrip,tam);
 	}
 	free(lineDescrip);
 	return 1;
@@ -137,11 +150,13 @@ void binarioInv(int n,char *bin) {
 }
 /* ----------------------------------------------------------------------*/
 
-void descriptaLine(long *linha,char *binario,long DP2, char *saida){
+void descriptaLine(long *linha,char *binario,long DP2, char *saida,int tam){
 	int j =0;
 	long resto = 0,valorfinal = 1;
-
-	for(j=0; linha[j] != '\0';j++){
+	for(j=0; j<tam;j++){
+		if(linha[j] == 319)
+				printf("\n\n OPA OLHA ELE AQUI\n\n");
+		if(((char)linha[j])!=' '){
 		resto = 0;valorfinal = 1;
 		for(int i=0;binario[i] != '\0';i++){
 			if (i==0)
@@ -153,6 +168,9 @@ void descriptaLine(long *linha,char *binario,long DP2, char *saida){
 		}
 		valorfinal = valorfinal%DP2;
 		saida[j] = valorfinal;
+		}
+		else
+			saida[j] = (char)linha[j];
 	}
 	saida[j] = '\0';
 }
@@ -162,22 +180,22 @@ int lelinha (char s [], int lim){
 	int c, i;
 	for(i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
 		s[i] = c;
-	if (c == '\n')
-	 	s[i++] = c;
+	if (c== '\n')
+		s[i++] = '\n';
 	s[i]= '\0';
 	return i;
 	}
 	
 int leCrip (long s[], int lim){
 
-	int c, i;
-	for(i=0; i<lim-1 && (c=getchar())!=EOF && c!=108; ++i)
+	int  i;
+	long c;
+	for(i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i){
 		s[i] = c;
-	if (c == 108)
-	 	s[i++] = c;
-	s[i]= '\0';
-	return i;
 	}
+	return i;
+}
+	
 	
 long eleva(long a,int b){
 	long aux=a;
@@ -186,27 +204,74 @@ long eleva(long a,int b){
 	return a;
 }
 
-void writeCrip(long *t){      
+void writeCrip(long *t,int tam){      
    FILE *fp;
    fp = fopen("saida.txt", "a");
-   for(int i = 0; t[i] !='\0';i++)
+   for(int i = 0; i<tam;i++){
       fputc(t[i],fp);
+   }
+   fprintf(fp,"\n");
    fclose(fp);          
 }	
 	
 void writeText(char *t){      
    FILE *fp;
-   fp = fopen("decode.txt", "a");
+   fp = fopen("decode.txt", "a");      
    fprintf(fp,"%s",t);
    fclose(fp);          
 }
 	
+void writeText2(char t){      
+   FILE *fp;
+   fp = fopen("decode.txt", "a");      
+   fprintf(fp,"%c",t);
+   fclose(fp);          
+}	
+	
+void writeCrip2(long *t, int tam){      
+   FILE *fp;
+   fp = fopen("saida.txt", "a");
+   for (int i= 0;i<tam;i++)
+   	fprintf(fp,"%ld ",t[i]);
+   fprintf(fp,"\n");
+   fclose(fp);          
+}	
+	
+char descriptaLong(char *binario,long DP2,long crip){
+		char saida;
+		if(crip!='\n'){
+		long resto = 0,valorfinal = 1;
+		for(int i=0;binario[i] != '\0';i++){
+			if (i==0)
+				resto = crip%DP2;
+			if (binario[i] =='1'){
+				valorfinal *=resto;
+			}
+			resto = eleva(resto,2) % DP2;
+		}
+		valorfinal = valorfinal%DP2;
+		saida = valorfinal;
+		printf("saida: %c\n",saida);
+		}
+		else{
+			printf("AQUI TEVE PARAGRAFO\n");
+			saida = (char) crip;
+		}
+		return saida;
+}	
 	
 	
-	
-	
-	
-	
+int descriptoText2(long DP1,long CP2){
+	long t=101;
+	char letra;
+	char bin[MAXBUF]="";
+   binarioInv(DP1,bin);
+	while (scanf("%ld",&t)==1) {
+		letra = descriptaLong(bin,CP2,t);
+		writeText2(letra);		
+	}
+	return 1;
+}	
 	
 	
 	
