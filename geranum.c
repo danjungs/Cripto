@@ -1,6 +1,7 @@
 /* ---------------- Bibliotecas e Definições -------------------------- */
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 #define ERRO 0
 #define OK 1
@@ -33,11 +34,10 @@ int main(){
 		DP = getDP(CP1,Y);
       generateNumCrip(CP1,CP2);
       generateNumDescrip(DP,CP2);
+      printf("CP1: %ld\nCP2: %ld\nDP: %ld\n",CP1,CP2,DP);
 	}
 	else
-		printf("Numeros não são Primos!\n");
-		
-	printf("CP1: %ld\nCP2: %ld\nDP: %ld\n",CP1,CP2,DP);
+		printf("Numeros não são Primos!\n");	
 	return 0;
 }
 
@@ -55,12 +55,14 @@ long getPrime(int num){
 // função testa se o numero é primo
 int checkPrime(long a){
    long c;
- 
-   for (c = 2 ; c <= a/2 ;c++){ 
-      if ( a%c == 0 )
-     		return ERRO;
-   }
-   return OK;
+  
+ if (a==1)
+ 		return ERRO;
+ for (c = 2 ; c <= a/2 ;c++){ 
+   if ( a%c == 0 )
+ 		return ERRO;
+ }
+ return OK;
 }
 
 /* função calcula CP, caso seja o primero, ela fatora Y e testa com
