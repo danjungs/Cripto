@@ -69,8 +69,8 @@ void getKeys(long*ch1,long*ch2,int sentido) {
 long getnumber(char*b,int num) {
     if (num==1)
         return atoi(b);
-    while(*b++ != ' ');
-    ;
+    while(*b++ != ' ')
+    	;
     return atoi(b);
 }
 /* ------------------------------------------------------------*/
@@ -111,7 +111,6 @@ int descriptoCode(long DP1, long DP2){
 		fprintf(fp,"%c",c);
 	}
 	fclose(fp);	
-	printf("acabou o decode\n");
 	return 1;
 }
 
@@ -119,8 +118,8 @@ char descriptaLong(long DP1,long DP2,long crip) {
     char saida;
     long resto = 0,valorfinal = 1;
 	char bin[MAXBUF]="";
-	
 	binarioInv(DP1,bin);
+	
     if(crip!='\n') {
         for(int i=0; bin[i] != '\0'; i++) {
             if (i==0)
@@ -132,9 +131,8 @@ char descriptaLong(long DP1,long DP2,long crip) {
             resto = eleva(resto,2) % DP2;
         }
         saida = valorfinal;
-    } else {
+    } else 
         saida = (char) crip;
-    }
     return saida;
 }
 
@@ -153,7 +151,7 @@ void binarioInv(int n,char *bin) {
     bin[i] = '\0';
 }
 /* ----------------------------------------------------------------------*/
-
+/* essa função recebe dois parametros e elava o primeiro pelo segundo*/
 long eleva(long a,int b) {
     long aux=a;
 
@@ -161,4 +159,3 @@ long eleva(long a,int b) {
         a=a*aux;
     return a;
 }
-
